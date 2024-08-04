@@ -1,6 +1,8 @@
-package dev.galiev
+package dev.galiev.anlyzr
 
-import dev.galiev.plugins.*
+import dev.galiev.anlyzr.plugins.configureHTTP
+import dev.galiev.anlyzr.plugins.configureRouting
+import dev.galiev.anlyzr.plugins.configureSerialization
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -13,6 +15,5 @@ fun main() {
 fun Application.module() {
     configureHTTP()
     configureSerialization()
-    configureDatabases()
     configureRouting()
 }

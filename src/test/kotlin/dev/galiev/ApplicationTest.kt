@@ -1,6 +1,6 @@
 package dev.galiev
 
-import dev.galiev.plugins.*
+import dev.galiev.anlyzr.plugins.configureRouting
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
