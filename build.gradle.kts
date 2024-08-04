@@ -13,7 +13,7 @@ group = "dev.galiev"
 version = "0.0.1"
 
 application {
-    mainClass.set("dev.galiev.ApplicationKt")
+    mainClass.set("dev.galiev.anlyzr.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -26,6 +26,8 @@ repositories {
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-cors-jvm")
+    implementation("com.zaxxer:HikariCP:4.0.3")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("org.postgresql:postgresql:$postgres_version")
@@ -34,4 +36,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-client-serialization")
 }
