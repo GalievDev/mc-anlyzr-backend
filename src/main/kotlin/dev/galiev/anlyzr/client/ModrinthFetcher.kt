@@ -1,6 +1,9 @@
 package dev.galiev.anlyzr.client
 
+import dev.galiev.anlyzr.dao.impl.ProjectDAOImpl
+import dev.galiev.anlyzr.dto.Project
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -31,8 +34,12 @@ object ModrinthFetcher {
             override fun run() {
                 runBlocking {
                     try {
-                        client.get("$URL/user/GalievDev/projects") {
+                        val response = client.get("$URL/user/GalievDev/projects") {
                             contentType(ContentType.Application.Json)
+                        }
+                        val projects: List<Project> = response.body()
+                        projects.forEach { project ->
+                            ProjectDAOImpl.add(project)
                         }
                     } catch (e: Exception) {
                         println("Error fetching API response: ${e.message}")
