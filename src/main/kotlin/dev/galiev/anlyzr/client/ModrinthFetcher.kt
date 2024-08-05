@@ -1,16 +1,14 @@
 package dev.galiev.anlyzr.client
 
-import dev.galiev.anlyzr.dto.Project
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import kotlin.time.Duration.Companion.milliseconds
+import java.util.*
 
 object ModrinthFetcher {
     const val URL = "https://api.modrinth.com/v2"
@@ -27,16 +25,21 @@ object ModrinthFetcher {
 
     }
 
-    suspend fun fetchData(): List<Project> {
-        var count = 0
-        withTimeout(5000.milliseconds) {
-            while (true) {
-                count++
-                client.get("$URL/user/GalievDev/projects") {
-                    contentType(ContentType.Application.Json)
+    fun fetchData() {
+        val timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                runBlocking {
+                    try {
+                        client.get("$URL/user/GalievDev/projects") {
+                            contentType(ContentType.Application.Json)
+                        }
+                    } catch (e: Exception) {
+                        println("Error fetching API response: ${e.message}")
+                    }
                 }
-                delay(1000.milliseconds)
             }
         }
+        timer.scheduleAtFixedRate(task, 0, 3600000)
     }
 }
