@@ -11,12 +11,11 @@ object ProjectDAOImpl: ProjectDAO {
     override fun add(project: Project): Int = update("INSERT INTO projects(time, title, downloads, followers) " +
                 "VALUES('${Timestamp.from(Instant.now())}', '${project.title}', '${project.downloads}', '${project.followers}')")
 
-
-    override fun get(id: Int): Project? {
+    override fun getById(id: Int): List<Project> {
         TODO("Not yet implemented")
     }
 
-    override fun getAll(): List<Project> {
+    override fun getInDateRange(id: Int, start: Int, end: Int): Project? {
         TODO("Not yet implemented")
     }
 }
