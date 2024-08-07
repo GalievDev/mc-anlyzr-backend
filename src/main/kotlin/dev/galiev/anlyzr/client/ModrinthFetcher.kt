@@ -37,9 +37,11 @@ object ModrinthFetcher {
                         val response = client.get("$URL/user/GalievDev/projects") {
                             contentType(ContentType.Application.Json)
                         }
-                        val projects: List<Project> = response.body()
-                        projects.forEach { project ->
-                            ProjectDAOImpl.add(project)
+                        val projectsStats: List<Project> = response.body()
+                        projectsStats.forEach { projectStat ->
+                            val id = ProjectDAOImpl.addProject(projectStat)
+                            projectStat.projectId = id
+                            ProjectDAOImpl.addStat(projectStat)
                         }
                     } catch (e: Exception) {
                         println("Error fetching API response: ${e.message}")
