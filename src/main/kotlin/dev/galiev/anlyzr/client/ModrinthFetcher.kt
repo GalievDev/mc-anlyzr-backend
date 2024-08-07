@@ -34,11 +34,8 @@ object ModrinthFetcher {
             override fun run() {
                 runBlocking {
                     try {
-                        val response = client.get("$URL/user/GalievDev/projects") {
-                            contentType(ContentType.Application.Json)
-                        }
-                        val projectsStats: List<Project> = response.body()
-                        projectsStats.forEach { projectStat ->
+                        val response = client.get("$URL/user/GalievDev/projects")
+                        response.body<List<Project>>().forEach { projectStat ->
                             val id = ProjectDAOImpl.addProject(projectStat)
                             projectStat.projectId = id
                             ProjectDAOImpl.addStat(projectStat)
