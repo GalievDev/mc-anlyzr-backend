@@ -41,7 +41,7 @@ object ModrinthFetcher {
                     try {
                         val response = client.get("$URL/user/GalievDev/projects")
                         response.body<List<Project>>().forEach { projectStat ->
-                            val id = projectService.addProject(projectStat)
+                            val id = projectService.addOrUpdate(projectStat)
                             projectStat.projectId = id
                             statsService.addStat(projectStat)
                         }
