@@ -1,6 +1,9 @@
 package dev.galiev.anlyzr.client
 
+import dev.galiev.anlyzr.dao.ProjectDAO
+import dev.galiev.anlyzr.dao.StatsDAO
 import dev.galiev.anlyzr.dao.impl.ProjectDAOImpl
+import dev.galiev.anlyzr.dao.impl.StatsDAOImpl
 import dev.galiev.anlyzr.dto.Project
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -15,6 +18,9 @@ import java.util.*
 
 object ModrinthFetcher {
     const val URL = "https://api.modrinth.com/v2"
+    private val projectService: ProjectDAO = ProjectDAOImpl()
+    private val statsService: StatsDAO = StatsDAOImpl()
+
     private val client: HttpClient = HttpClient(CIO).config {
         install(ContentNegotiation) {
             json(
@@ -25,7 +31,6 @@ object ModrinthFetcher {
                 }
             )
         }
-
     }
 
     fun fetchData() {
@@ -36,9 +41,9 @@ object ModrinthFetcher {
                     try {
                         val response = client.get("$URL/user/GalievDev/projects")
                         response.body<List<Project>>().forEach { projectStat ->
-                            val id = ProjectDAOImpl.addProject(projectStat)
+                            val id = projectService.addProject(projectStat)
                             projectStat.projectId = id
-                            ProjectDAOImpl.addStat(projectStat)
+                            statsService.addStat(projectStat)
                         }
                     } catch (e: Exception) {
                         println("Error fetching API response: ${e.message}")
