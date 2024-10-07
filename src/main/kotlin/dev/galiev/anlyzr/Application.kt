@@ -1,6 +1,7 @@
 package dev.galiev.anlyzr
 
 import dev.galiev.anlyzr.client.ModrinthFetcher
+import dev.galiev.anlyzr.plugins.configureDatabase
 import dev.galiev.anlyzr.plugins.configureHTTP
 import dev.galiev.anlyzr.plugins.configureRouting
 import dev.galiev.anlyzr.plugins.configureSerialization
@@ -18,4 +19,5 @@ fun Application.module() {
     configureHTTP()
     configureSerialization()
     configureRouting()
+    configureDatabase()
 }
