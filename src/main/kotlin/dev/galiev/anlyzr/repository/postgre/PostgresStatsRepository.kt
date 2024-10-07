@@ -1,0 +1,31 @@
+package dev.galiev.anlyzr.repository.postgre
+
+import dev.galiev.anlyzr.dto.Stats
+import dev.galiev.anlyzr.misc.FAILURE
+import dev.galiev.anlyzr.misc.SUCCESS
+import dev.galiev.anlyzr.misc.dbQuery
+import dev.galiev.anlyzr.model.StatsModel
+import dev.galiev.anlyzr.repository.StatsRepository
+import org.jetbrains.exposed.sql.insert
+import java.time.OffsetDateTime
+
+object PostgresStatsRepository: StatsRepository {
+    override suspend fun addStat(stats: Stats): Int = dbQuery {
+        val insertResult = StatsModel.insert {
+            it[time] = OffsetDateTime.now()
+            it[projectId] = stats.projectId
+            it[title] = stats.title
+            it[downloads] = stats.downloads
+            it[followers] = stats.followers
+        }
+        if (insertResult.insertedCount > 0) SUCCESS else FAILURE
+    }
+
+    override suspend fun getInDateRange(id: Int, start: Int, end: Int): List<Stats> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getStatsByProjectId(id: Int): List<Stats> {
+        TODO("Not yet implemented")
+    }
+}
