@@ -4,14 +4,14 @@ import dev.galiev.anlyzr.dto.Stats
 import dev.galiev.anlyzr.misc.FAILURE
 import dev.galiev.anlyzr.misc.SUCCESS
 import dev.galiev.anlyzr.misc.dbQuery
-import dev.galiev.anlyzr.model.StatsModel
+import dev.galiev.anlyzr.model.StatsTable
 import dev.galiev.anlyzr.repository.StatsRepository
 import org.jetbrains.exposed.sql.insert
 import java.time.OffsetDateTime
 
 object PostgresStatsRepository: StatsRepository {
     override suspend fun addStat(stats: Stats): Int = dbQuery {
-        val insertResult = StatsModel.insert {
+        val insertResult = StatsTable.insert {
             it[time] = OffsetDateTime.now()
             it[projectId] = stats.projectId
             it[title] = stats.title
