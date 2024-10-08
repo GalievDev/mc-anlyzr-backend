@@ -15,9 +15,9 @@ fun main() {
 }
 
 fun Application.module() {
-    ModrinthFetcher.fetchData()
     configureHTTP()
     configureSerialization()
     configureRouting()
     configureDatabase()
+    ModrinthFetcher.fetchData()
 }
