@@ -1,10 +1,11 @@
 package dev.galiev.anlyzr.client
 
-import dev.galiev.anlyzr.dao.ProjectDAO
-import dev.galiev.anlyzr.dao.StatsDAO
-import dev.galiev.anlyzr.dao.impl.ProjectDAOImpl
-import dev.galiev.anlyzr.dao.impl.StatsDAOImpl
 import dev.galiev.anlyzr.dto.Project
+import dev.galiev.anlyzr.dto.Stats
+import dev.galiev.anlyzr.repository.ProjectRepository
+import dev.galiev.anlyzr.repository.StatsRepository
+import dev.galiev.anlyzr.repository.postgre.PostgresProjectRepository
+import dev.galiev.anlyzr.repository.postgre.PostgresStatsRepository
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -13,13 +14,14 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
-import java.util.*
+import kotlin.time.Duration.Companion.minutes
 
 object ModrinthFetcher {
     const val URL = "https://api.modrinth.com/v2"
-    private val projectService: ProjectDAO = ProjectDAOImpl()
-    private val statsService: StatsDAO = StatsDAOImpl()
+    private val projectRep: ProjectRepository = PostgresProjectRepository
+    private val statsRep: StatsRepository = PostgresStatsRepository
 
     private val client: HttpClient = HttpClient(CIO).config {
         install(ContentNegotiation) {
@@ -33,24 +35,33 @@ object ModrinthFetcher {
         }
     }
 
-    fun fetchData() {
-        val timer = Timer()
+    fun fetchData() = runBlocking {
+        withTimeout(60.minutes) {
+            val response = client.get("$URL/user/GalievDev/projects")
+            response.body<List<Project>>().forEach { project ->
+                if (!projectRep.exists(project.title)) {
+                    projectRep.add(project)
+                }
+                val projectModel = projectRep.getAll().find { it.title == project.title }!!
+                statsRep.addStat(Stats(
+                    projectModel.projectId,
+                    projectModel.title,
+                    project.downloads,
+                    project.followers))
+            }
+        }
+/*        val timer = Timer()
         val task = object : TimerTask() {
             override fun run() {
                 runBlocking {
                     try {
-                        val response = client.get("$URL/user/GalievDev/projects")
-                        response.body<List<Project>>().forEach { projectStat ->
-                            val id = projectService.addOrUpdate(projectStat)
-                            projectStat.projectId = id
-                            statsService.addStat(projectStat)
-                        }
+
                     } catch (e: Exception) {
                         println("Error fetching API response: ${e.message}")
                     }
                 }
             }
         }
-        timer.scheduleAtFixedRate(task, 0, 3600000)
+        timer.scheduleAtFixedRate(task, 0, 3600000)*/
     }
 }
