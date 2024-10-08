@@ -6,4 +6,5 @@ interface ProjectRepository {
     suspend fun add(project: Project): Int
     suspend fun getAll(): List<Project>
     suspend fun getById(id: Int): Project?
+    suspend fun exists(title: String): Boolean
 }
