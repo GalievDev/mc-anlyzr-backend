@@ -15,6 +15,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.minutes
 
@@ -44,6 +45,7 @@ object ModrinthFetcher {
                 }
                 val projectModel = projectRep.getAll().find { it.title == project.title }!!
                 statsRep.addStat(Stats(
+                    Clock.System.now().toEpochMilliseconds(),
                     projectModel.projectId,
                     projectModel.title,
                     project.downloads,
