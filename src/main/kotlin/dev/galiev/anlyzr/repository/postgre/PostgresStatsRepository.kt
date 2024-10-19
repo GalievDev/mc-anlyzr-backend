@@ -6,7 +6,9 @@ import dev.galiev.anlyzr.misc.SUCCESS
 import dev.galiev.anlyzr.misc.dbQuery
 import dev.galiev.anlyzr.model.StatsTable
 import dev.galiev.anlyzr.repository.StatsRepository
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import java.time.OffsetDateTime
 
 object PostgresStatsRepository: StatsRepository {
@@ -21,8 +23,9 @@ object PostgresStatsRepository: StatsRepository {
         if (insertResult.insertedCount > 0) SUCCESS else FAILURE
     }
 
-    override suspend fun getInDateRange(id: Int, start: Int, end: Int): List<Stats> {
-        TODO("Not yet implemented")
+    override suspend fun getInDateRange(id: Int, start: Long, end: Long): List<Stats> = dbQuery {
+        StatsTable.selectAll().where { StatsTable.time.between(start, end) and (StatsTable.projectId eq id) }
+            .map(Stats::fromResultRow)
     }
 
     override suspend fun getStatsByProjectId(id: Int): List<Stats> {
