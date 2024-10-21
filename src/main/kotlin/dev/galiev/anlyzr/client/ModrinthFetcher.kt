@@ -52,18 +52,5 @@ object ModrinthFetcher {
                     project.followers))
             }
         }
-/*        val timer = Timer()
-        val task = object : TimerTask() {
-            override fun run() {
-                runBlocking {
-                    try {
-
-                    } catch (e: Exception) {
-                        println("Error fetching API response: ${e.message}")
-                    }
-                }
-            }
-        }
-        timer.scheduleAtFixedRate(task, 0, 3600000)*/
     }
 }
