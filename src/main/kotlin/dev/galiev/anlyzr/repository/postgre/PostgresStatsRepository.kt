@@ -31,8 +31,10 @@ object PostgresStatsRepository: StatsRepository {
         }.map(Stats::fromResultRow)
     }
 
-    override suspend fun getStatsByProjectId(id: Int): List<Stats> {
-        TODO("Not yet implemented")
+    override suspend fun getStatsByProjectId(id: Int): List<Stats> = dbQuery {
+        StatsTable.selectAll().where {
+            StatsTable.projectId eq id
+        }.map(Stats::fromResultRow)
     }
 
     private fun getOffsetTime(value: Long): OffsetDateTime =
