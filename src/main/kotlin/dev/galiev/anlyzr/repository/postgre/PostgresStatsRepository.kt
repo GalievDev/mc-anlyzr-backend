@@ -9,7 +9,9 @@ import dev.galiev.anlyzr.repository.StatsRepository
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 object PostgresStatsRepository: StatsRepository {
     override suspend fun addStat(stats: Stats): Int = dbQuery {
@@ -23,12 +25,16 @@ object PostgresStatsRepository: StatsRepository {
         if (insertResult.insertedCount > 0) SUCCESS else FAILURE
     }
 
-    override suspend fun getInDateRange(id: Int, start: Long, end: Long): List<Stats> = dbQuery {
-        StatsTable.selectAll().where { StatsTable.time.between(start, end) and (StatsTable.projectId eq id) }
-            .map(Stats::fromResultRow)
+    override suspend fun getInDateRange(id: Int, from: Long, to: Long): List<Stats> = dbQuery {
+        StatsTable.selectAll().where {
+            StatsTable.time.between(getOffsetTime(from), getOffsetTime(to)) and (StatsTable.projectId eq id)
+        }.map(Stats::fromResultRow)
     }
 
     override suspend fun getStatsByProjectId(id: Int): List<Stats> {
         TODO("Not yet implemented")
     }
+
+    private fun getOffsetTime(value: Long): OffsetDateTime =
+        OffsetDateTime.of(LocalDateTime.ofEpochSecond(value, 0, ZoneOffset.UTC), ZoneOffset.UTC)
 }
