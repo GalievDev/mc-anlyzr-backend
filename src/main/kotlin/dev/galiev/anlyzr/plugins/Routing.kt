@@ -12,8 +12,8 @@ fun Application.configureRouting() {
         get("/") {
             call.respond("Hello World!")
         }
-        route("/stats") {
-            get("/{id}") {
+        route("/stats/{id}") {
+            get("/line") {
                 val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
                     HttpStatusCode.BadRequest, "Bad Request"
                 )
@@ -22,6 +22,13 @@ fun Application.configureRouting() {
                 val to = call.parameters["to"]?.toLongOrNull() ?: Clock.System.now().toEpochMilliseconds()
 
                 call.respond(PostgresStatsRepository.getInDateRange(id, from!!, to))
+            }
+            get("/pie") {
+                val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                    HttpStatusCode.BadRequest, "Bad Request"
+                )
+
+                call.respond(PostgresStatsRepository.getStatsByProjectId(id))
             }
         }
     }
