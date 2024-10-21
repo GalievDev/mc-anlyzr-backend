@@ -14,7 +14,7 @@ data class Stats (
 ) {
     companion object {
         fun fromResultRow(resultRow: ResultRow): Stats = Stats(
-            time = resultRow[StatsTable.time].second.toLong(),
+            time = resultRow[StatsTable.time].toEpochSecond(),
             projectId = resultRow[StatsTable.projectId],
             title = resultRow[StatsTable.title],
             downloads = resultRow[StatsTable.downloads],
